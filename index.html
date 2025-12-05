@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureConnect - Neumorphic Video Call</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Neumorphism Base Variables */
+        :root {
+            --bg-color: #e0e5ec;
+            --text-main: #4a4a4a;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --accent: #6b7280; /* Cool Gray */
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Neumorphic Container */
+        .neu-box {
+            border-radius: 20px;
+            background: var(--bg-color);
+            box-shadow: 9px 9px 16px var(--shadow-dark), 
+                        -9px -9px 16px var(--shadow-light);
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Neumorphic Input */
+        .neu-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background: var(--bg-color);
+            box-shadow: inset 6px 6px 10px var(--shadow-dark), 
+                        inset -6px -6px 10px var(--shadow-light);
+            color: var(--text-main);
+            outline: none;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .neu-input:focus {
+            box-shadow: inset 3px 3px 5px var(--shadow-dark), 
+                        inset -3px -3px 5px var(--shadow-light);
+        }
+
+        /* Neumorphic Button */
+        .neu-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: var(--bg-color);
+            box-shadow: 6px 6px 10px var(--shadow-dark), 
+                        -6px -6px 10px var(--shadow-light);
+            color: var(--text-main);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .neu-btn:active {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
+                        inset -4px -4px 8px var(--shadow-light);
+            transform: translateY(1px);
+        }
+
+        .neu-btn.danger {
+            color: var(--danger);
+        }
+        
+        .neu-btn.success {
+            color: var(--success);
+        }
+
+        /* Video Containers */
+        .video-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .video-wrapper {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+            padding: 5px; /* Frame */
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
+                        inset -4px -4px 8px var(--shadow-light);
+            aspect-ratio: 4/3;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            transform: scaleX(-1); /* Mirror effect */
+        }
+
+        /* Notifications/Status */
+        #status-msg {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            min-height: 20px;
+            color: var(--accent);
+        }
+
+        /* Animations */
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: var(--shadow-dark); border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <!-- App Container -->
+    <div id="app" class="w-full max-w-4xl p-4">
+        
+        <!-- HEADER -->
+        <div class="neu-box mb-6 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-700"><i class="fas fa-shield-alt mr-2"></i>SecureConnect</h1>
+            <button id="logout-btn" class="neu-btn hidden" style="width: auto; padding: 8px 15px;">
+                <i class="fas fa-power-off text-red-500"></i>
+            </button>
+        </div>
+
+        <!-- AUTH SECTION -->
+        <div id="auth-container" class="max-w-md mx-auto fade-in">
+            <div class="neu-box text-center">
+                <h2 id="auth-title" class="text-2xl font-bold mb-6 text-gray-600">Login</h2>
+                
+                <input type="email" id="email" placeholder="Email Address" class="neu-input">
+                <input type="password" id="password" placeholder="Password" class="neu-input">
+                
+                <div id="auth-error" class="text-red-500 text-sm mb-4 hidden"></div>
+
+                <button id="auth-action-btn" class="neu-btn text-blue-600 mb-4">
+                    LOGIN
+                </button>
+                
+                <p class="text-sm text-gray-500 cursor-pointer hover:text-blue-500" id="toggle-auth">
+                    Need an account? Register here
+                </p>
+            </div>
+        </div>
+
+        <!-- DASHBOARD SECTION -->
+        <div id="dashboard-container" class="hidden fade-in">
+            
+            <!-- User Info & Call Controls -->
+            <div class="neu-box mb-6">
+                <p class="text-sm text-gray-500 mb-2">My Unique ID (Share this to receive calls):</p>
+                <div class="flex gap-2 mb-6">
+                    <input type="text" id="my-uid" readonly class="neu-input text-center font-mono text-sm" style="margin-bottom: 0;">
+                    <button id="copy-uid" class="neu-btn" style="width: 50px;"><i class="fas fa-copy"></i></button>
+                </div>
+
+                <div class="border-t border-gray-300 pt-6">
+                    <p class="text-sm text-gray-500 mb-2">Call Someone:</p>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="target-uid" placeholder="Enter Friend's UID here" class="neu-input" style="margin-bottom: 0;">
+                        <button id="call-btn" class="neu-btn success sm:w-1/3">
+                            <i class="fas fa-video"></i> CALL
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call Status -->
+            <div id="call-status" class="neu-box mb-6 hidden text-center">
+                <p id="status-text" class="mb-4 font-bold text-gray-600">Incoming Call...</p>
+                <div class="flex justify-center gap-4">
+                    <button id="accept-btn" class="neu-btn success" style="width: auto; padding: 10px 30px;">
+                        <i class="fas fa-phone"></i> Accept
+                    </button>
+                    <button id="hangup-btn" class="neu-btn danger" style="width: auto; padding: 10px 30px;">
+                        <i class="fas fa-phone-slash"></i> Hangup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Videos -->
+            <div class="video-grid">
+                <div class="video-wrapper">
+                    <video id="local-video" autoplay playsinline muted></video>
+                    <div class="absolute bottom-2 left-2 bg-gray-800 bg-opacity-50 text-white text-xs px-2 py-1 rounded">You</div>
+                </div>
+                <div class="video-wrapper">
+                    <video id="remote-video" autoplay playsinline></video>
+                    <div class="absolute bottom-2 left-2 bg-gray-800 bg-opacity-50 text-white text-xs px-2 py-1 rounded">Remote</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, addDoc, collection, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        // Firebase Configuration (Provided by User)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBy5AGDGQFZqbL83fKQfLViX_pyOu6AJ38",
+            authDomain: "phone-f605e.firebaseapp.com",
+            databaseURL: "https://phone-f605e-default-rtdb.firebaseio.com",
+            projectId: "phone-f605e",
+            storageBucket: "phone-f605e.firebasestorage.app",
+            messagingSenderId: "902490805880",
+            appId: "1:902490805880:web:3a2f31542674bc508e3f8d",
+            measurementId: "G-LM88X7BV39"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // State Variables
+        let user = null;
+        let localStream = null;
+        let remoteStream = null;
+        let peerConnection = null;
+        let currentCallDocId = null; // Currently active call document ID
+        let unsubscribeCallListener = null;
+
+        // ICE Servers (Google Public STUN)
+        const servers = {
+            iceServers: [
+                { urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }
+            ],
+            iceCandidatePoolSize: 10,
+        };
+
+        // DOM Elements
+        const authContainer = document.getElementById('auth-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const authActionBtn = document.getElementById('auth-action-btn');
+        const toggleAuthBtn = document.getElementById('toggle-auth');
+        const authTitle = document.getElementById('auth-title');
+        const authError = document.getElementById('auth-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        const myUidInput = document.getElementById('my-uid');
+        const targetUidInput = document.getElementById('target-uid');
+        const callBtn = document.getElementById('call-btn');
+        const localVideo = document.getElementById('local-video');
+        const remoteVideo = document.getElementById('remote-video');
+        const callStatus = document.getElementById('call-status');
+        const statusText = document.getElementById('status-text');
+        const acceptBtn = document.getElementById('accept-btn');
+        const hangupBtn = document.getElementById('hangup-btn');
+        const copyUidBtn = document.getElementById('copy-uid');
+
+        let isLoginMode = true;
+
+        // --- AUTHENTICATION LOGIC ---
+
+        onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                user = currentUser;
+                showDashboard();
+            } else {
+                user = null;
+                showAuth();
+            }
+        });
+
+        authActionBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            authError.classList.add('hidden');
+
+            try {
+                if (isLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                }
+            } catch (error) {
+                authError.textContent = error.message;
+                authError.classList.remove('hidden');
+            }
+        });
+
+        toggleAuthBtn.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            authTitle.textContent = isLoginMode ? 'Login' : 'Register';
+            authActionBtn.textContent = isLoginMode ? 'LOGIN' : 'REGISTER';
+            toggleAuthBtn.textContent = isLoginMode ? 'Need an account? Register here' : 'Have an account? Login here';
+            authError.classList.add('hidden');
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.reload();
+        });
+
+        function showAuth() {
+            authContainer.classList.remove('hidden');
+            dashboardContainer.classList.add('hidden');
+            logoutBtn.classList.add('hidden');
+        }
+
+        async function showDashboard() {
+            authContainer.classList.add('hidden');
+            dashboardContainer.classList.remove('hidden');
+            logoutBtn.classList.remove('hidden');
+            myUidInput.value = user.uid;
+            
+            // Start Local Camera immediately
+            await startLocalVideo();
+            
+            // Listen for calls directed to MY UID
+            listenForIncomingCalls();
+        }
+
+        // --- WEBRTC & CALL LOGIC ---
+
+        async function startLocalVideo() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                localVideo.srcObject = localStream;
+                remoteStream = new MediaStream();
+                remoteVideo.srcObject = remoteStream;
+            } catch (err) {
+                console.error("Error accessing media devices:", err);
+                alert("Please allow camera and microphone access!");
+            }
+        }
+
+        // 1. Caller starts the call
+        callBtn.addEventListener('click', async () => {
+            const targetUid = targetUidInput.value.trim();
+            if (!targetUid || targetUid === user.uid) {
+                alert("Please enter a valid User ID (not your own).");
+                return;
+            }
+
+            callBtn.disabled = true;
+            callBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calling...';
+            hangupBtn.parentElement.parentElement.classList.remove('hidden');
+            statusText.textContent = "Calling...";
+            acceptBtn.classList.add('hidden');
+
+            // Initialize Peer Connection
+            peerConnection = new RTCPeerConnection(servers);
+
+            // Add local tracks
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+
+            // Handle remote tracks
+            peerConnection.ontrack = (event) => {
+                event.streams[0].getTracks().forEach(track => {
+                    remoteStream.addTrack(track);
+                });
+            };
+
+            // Setup Firestore Doc for this call (ID is the Receiver's UID)
+            // Note: In a real app, we'd use a unique Call ID, but for this demo, 
+            // using the Receiver's UID as the document ID ensures a direct line.
+            const callDocRef = doc(db, 'calls', targetUid);
+            const offerCandidates = collection(callDocRef, 'offerCandidates');
+            const answerCandidates = collection(callDocRef, 'answerCandidates');
+
+            // Handle ICE Candidates (Caller)
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    addDoc(offerCandidates, event.candidate.toJSON());
+                }
+            };
+
+            // Create Offer
+            const offerDescription = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offerDescription);
+
+            // Write Offer to Firestore
+            const callData = {
+                offer: {
+                    type: offerDescription.type,
+                    sdp: offerDescription.sdp,
+                },
+                callerId: user.uid,
+                timestamp: new Date()
+            };
+            
+            await setDoc(callDocRef, callData);
+
+            // Listen for Answer
+            onSnapshot(callDocRef, (snapshot) => {
+                const data = snapshot.data();
+                if (!peerConnection.currentRemoteDescription && data?.answer) {
+                    const answerDescription = new RTCSessionDescription(data.answer);
+                    peerConnection.setRemoteDescription(answerDescription);
+                    statusText.textContent = "Connected";
+                    callBtn.innerHTML = '<i class="fas fa-video"></i> CALL';
+                }
+            });
+
+            // Listen for Remote ICE Candidates (Answerer's candidates)
+            onSnapshot(answerCandidates, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added') {
+                        const candidate = new RTCIceCandidate(change.doc.data());
+                        peerConnection.addIceCandidate(candidate);
+                    }
+                });
+            });
+            
+            currentCallDocId = targetUid;
+        });
+
+        // 2. Receiver Listens for Calls (Document ID = My UID)
+        function listenForIncomingCalls() {
+            const myCallDoc = doc(db, 'calls', user.uid);
+
+            unsubscribeCallListener = onSnapshot(myCallDoc, (snapshot) => {
+                const data = snapshot.data();
+                if (data && data.offer && !peerConnection) {
+                    // Incoming Call!
+                    callStatus.classList.remove('hidden');
+                    statusText.textContent = `Incoming call from... ${data.callerId.slice(0,5)}..`;
+                    acceptBtn.classList.remove('hidden');
+                    
+                    acceptBtn.onclick = () => answerCall(myCallDoc, data.offer);
+                }
+            });
+        }
+
+        async function answerCall(callDocRef, offer) {
+            acceptBtn.classList.add('hidden');
+            statusText.textContent = "Connecting...";
+
+            peerConnection = new RTCPeerConnection(servers);
+
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+
+            peerConnection.ontrack = (event) => {
+                event.streams[0].getTracks().forEach(track => {
+                    remoteStream.addTrack(track);
+                });
+            };
+
+            const offerCandidates = collection(callDocRef, 'offerCandidates');
+            const answerCandidates = collection(callDocRef, 'answerCandidates');
+
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    addDoc(answerCandidates, event.candidate.toJSON());
+                }
+            };
+
+            // Set Remote Description (The Caller's Offer)
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+            // Create Answer
+            const answerDescription = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answerDescription);
+
+            const answer = {
+                type: answerDescription.type,
+                sdp: answerDescription.sdp,
+            };
+
+            // Write Answer to Firestore
+            await updateDoc(callDocRef, { answer });
+
+            // Listen for Remote ICE Candidates (Caller's candidates)
+            onSnapshot(offerCandidates, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'added') {
+                        const candidate = new RTCIceCandidate(change.doc.data());
+                        peerConnection.addIceCandidate(candidate);
+                    }
+                });
+            });
+            
+            currentCallDocId = user.uid;
+        }
+
+        // 3. Hangup Logic
+        hangupBtn.addEventListener('click', async () => {
+            // Clean up connections
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            
+            // Stop streams (optional, usually keep camera on for UX)
+            // localStream.getTracks().forEach(track => track.stop());
+
+            // Remove Firestore Data to end call cleanly
+            if (currentCallDocId) {
+                // In a real app we would delete subcollections properly using a Cloud Function
+                // For this single file demo, we just try to delete the main doc
+                try {
+                    // Just reset the UI, let the other user disconnect on their own logic
+                    // or delete the doc:
+                    // await deleteDoc(doc(db, 'calls', currentCallDocId)); 
+                } catch(e) { console.log(e); }
+            }
+
+            // Reset UI
+            callStatus.classList.add('hidden');
+            callBtn.disabled = false;
+            callBtn.innerHTML = '<i class="fas fa-video"></i> CALL';
+            window.location.reload(); // Quickest way to reset state for this simple demo
+        });
+
+        // Copy UID Utility
+        copyUidBtn.addEventListener('click', () => {
+            myUidInput.select();
+            document.execCommand('copy'); // Fallback for older browsers
+            // Or navigator.clipboard.writeText(myUidInput.value); 
+            copyUidBtn.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => copyUidBtn.innerHTML = '<i class="fas fa-copy"></i>', 2000);
+        });
+
+    </script>
+</body>
+</html>
