@@ -3,245 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureConnect - Neumorphic Video Call</title>
+    <title>Video Chat Pro - Hacker Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Neumorphism Base Variables */
-        :root {
-            --bg-color: #e0e5ec;
-            --text-main: #4a4a4a;
-            --shadow-light: #ffffff;
-            --shadow-dark: #a3b1c6;
-            --accent: #6b7280; /* Cool Gray */
-            --danger: #ef4444;
-            --success: #10b981;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        /* Neumorphic Container */
-        .neu-box {
-            border-radius: 20px;
-            background: var(--bg-color);
-            box-shadow: 9px 9px 16px var(--shadow-dark), 
-                        -9px -9px 16px var(--shadow-light);
-            padding: 2rem;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        /* Neumorphic Input */
-        .neu-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 10px;
-            background: var(--bg-color);
-            box-shadow: inset 6px 6px 10px var(--shadow-dark), 
-                        inset -6px -6px 10px var(--shadow-light);
-            color: var(--text-main);
-            outline: none;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .neu-input:focus {
-            box-shadow: inset 3px 3px 5px var(--shadow-dark), 
-                        inset -3px -3px 5px var(--shadow-light);
-        }
-
-        /* Neumorphic Button */
-        .neu-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: var(--bg-color);
-            box-shadow: 6px 6px 10px var(--shadow-dark), 
-                        -6px -6px 10px var(--shadow-light);
-            color: var(--text-main);
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .neu-btn:active {
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
-                        inset -4px -4px 8px var(--shadow-light);
-            transform: translateY(1px);
-        }
-
-        .neu-btn.danger {
-            color: var(--danger);
-        }
-        
-        .neu-btn.success {
-            color: var(--success);
-        }
-
-        /* Video Containers */
-        .video-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        @media (min-width: 768px) {
-            .video-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .video-wrapper {
-            position: relative;
-            border-radius: 15px;
-            overflow: hidden;
-            background: #000;
-            padding: 5px; /* Frame */
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
-                        inset -4px -4px 8px var(--shadow-light);
-            aspect-ratio: 4/3;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            transform: scaleX(-1); /* Mirror effect */
-        }
-
-        /* Notifications/Status */
-        #status-msg {
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            min-height: 20px;
-            color: var(--accent);
-        }
-
-        /* Animations */
-        .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: var(--shadow-dark); border-radius: 4px; }
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Courier New', Courier, monospace; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        video { transform: scaleX(-1); object-fit: cover; border-radius: 12px; }
+        .btn-hacker { @apply bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 shadow-[0_0_10px_rgba(34,197,94,0.5)]; }
+        .input-hacker { @apply w-full bg-slate-800 border border-slate-600 rounded p-3 text-white focus:outline-none focus:border-green-500 transition-colors; }
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
     </style>
 </head>
-<body>
+<body class="h-screen flex flex-col overflow-hidden">
 
-    <!-- App Container -->
-    <div id="app" class="w-full max-w-4xl p-4">
+    <!-- Navbar -->
+    <nav class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-900 z-10">
+        <div class="flex items-center gap-2">
+            <i class="fas fa-video text-green-500 text-xl"></i>
+            <h1 class="text-xl font-bold tracking-wider">SECURE LINK</h1>
+        </div>
+        <button id="logoutBtn" class="hidden text-sm text-red-400 hover:text-red-300">LOGOUT</button>
+    </nav>
+
+    <!-- Auth Container -->
+    <div id="authContainer" class="flex-1 flex items-center justify-center p-4">
+        <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 text-center text-green-400">ACCESS TERMINAL</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">EMAIL</label>
+                    <input type="email" id="emailInput" class="input-hacker" placeholder="user@secure.net">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">PASSWORD</label>
+                    <input type="password" id="passInput" class="input-hacker" placeholder="••••••••">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button id="loginBtn" class="flex-1 btn-hacker">LOGIN</button>
+                    <button id="registerBtn" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded transition">REGISTER</button>
+                </div>
+                <p id="authError" class="text-red-500 text-xs text-center h-4"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container (Hidden initially) -->
+    <div id="appContainer" class="hidden flex-1 flex flex-col relative">
         
-        <!-- HEADER -->
-        <div class="neu-box mb-6 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-gray-700"><i class="fas fa-shield-alt mr-2"></i>SecureConnect</h1>
-            <button id="logout-btn" class="neu-btn hidden" style="width: auto; padding: 8px 15px;">
-                <i class="fas fa-power-off text-red-500"></i>
-            </button>
-        </div>
-
-        <!-- AUTH SECTION -->
-        <div id="auth-container" class="max-w-md mx-auto fade-in">
-            <div class="neu-box text-center">
-                <h2 id="auth-title" class="text-2xl font-bold mb-6 text-gray-600">Login</h2>
-                
-                <input type="email" id="email" placeholder="Email Address" class="neu-input">
-                <input type="password" id="password" placeholder="Password" class="neu-input">
-                
-                <div id="auth-error" class="text-red-500 text-sm mb-4 hidden"></div>
-
-                <button id="auth-action-btn" class="neu-btn text-blue-600 mb-4">
-                    LOGIN
-                </button>
-                
-                <p class="text-sm text-gray-500 cursor-pointer hover:text-blue-500" id="toggle-auth">
-                    Need an account? Register here
-                </p>
-            </div>
-        </div>
-
-        <!-- DASHBOARD SECTION -->
-        <div id="dashboard-container" class="hidden fade-in">
+        <!-- Video Area -->
+        <div class="flex-1 relative bg-black flex items-center justify-center overflow-hidden">
+            <!-- Remote Video (Full Screen) -->
+            <video id="remoteVideo" autoplay playsinline class="w-full h-full absolute inset-0 bg-slate-900"></video>
             
-            <!-- User Info & Call Controls -->
-            <div class="neu-box mb-6">
-                <p class="text-sm text-gray-500 mb-2">My Unique ID (Share this to receive calls):</p>
-                <div class="flex gap-2 mb-6">
-                    <input type="text" id="my-uid" readonly class="neu-input text-center font-mono text-sm" style="margin-bottom: 0;">
-                    <button id="copy-uid" class="neu-btn" style="width: 50px;"><i class="fas fa-copy"></i></button>
-                </div>
+            <!-- Local Video (Picture in Picture) -->
+            <div class="absolute top-4 right-4 w-32 h-48 md:w-48 md:h-72 bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-600 z-10 transition-all hover:scale-105">
+                <video id="localVideo" autoplay playsinline muted class="w-full h-full bg-black"></video>
+                <div class="absolute bottom-1 left-0 w-full text-center text-[10px] bg-black/50 text-white">YOU</div>
+            </div>
 
-                <div class="border-t border-gray-300 pt-6">
-                    <p class="text-sm text-gray-500 mb-2">Call Someone:</p>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="target-uid" placeholder="Enter Friend's UID here" class="neu-input" style="margin-bottom: 0;">
-                        <button id="call-btn" class="neu-btn success sm:w-1/3">
-                            <i class="fas fa-video"></i> CALL
-                        </button>
+            <!-- Call Controls Overlay -->
+            <div id="callControls" class="hidden absolute bottom-8 left-0 w-full flex justify-center gap-6 z-20">
+                <button id="toggleMic" class="p-4 rounded-full bg-slate-700 hover:bg-slate-600 text-white shadow-lg"><i class="fas fa-microphone"></i></button>
+                <button id="hangupBtn" class="p-4 rounded-full bg-red-600 hover:bg-red-700 text-white shadow-[0_0_15px_rgba(220,38,38,0.6)] transform hover:scale-110 transition"><i class="fas fa-phone-slash"></i></button>
+                <button id="toggleCam" class="p-4 rounded-full bg-slate-700 hover:bg-slate-600 text-white shadow-lg"><i class="fas fa-video"></i></button>
+            </div>
+
+            <!-- Waiting Message -->
+            <div id="waitingMsg" class="hidden absolute inset-0 flex items-center justify-center bg-black/80 z-10">
+                <div class="text-center animate-pulse">
+                    <i class="fas fa-circle-notch fa-spin text-4xl text-green-500 mb-4"></i>
+                    <p class="text-green-400">ESTABLISHING UPLINK...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard / Dial Pad -->
+        <div id="dashboard" class="bg-slate-900 p-4 border-t border-slate-700 rounded-t-2xl absolute bottom-0 w-full transition-transform duration-300 z-30">
+            <div class="max-w-3xl mx-auto">
+                <!-- My ID Display -->
+                <div class="flex items-center justify-between bg-slate-800 p-3 rounded-lg mb-4 border border-slate-600">
+                    <div>
+                        <p class="text-[10px] text-slate-400">YOUR SECURE ID</p>
+                        <p id="myIdDisplay" class="font-mono text-green-400 text-sm truncate w-48 md:w-auto">Loading...</p>
                     </div>
+                    <button id="copyBtn" class="text-slate-400 hover:text-white"><i class="far fa-copy"></i></button>
                 </div>
-            </div>
 
-            <!-- Call Status -->
-            <div id="call-status" class="neu-box mb-6 hidden text-center">
-                <p id="status-text" class="mb-4 font-bold text-gray-600">Incoming Call...</p>
-                <div class="flex justify-center gap-4">
-                    <button id="accept-btn" class="neu-btn success" style="width: auto; padding: 10px 30px;">
-                        <i class="fas fa-phone"></i> Accept
-                    </button>
-                    <button id="hangup-btn" class="neu-btn danger" style="width: auto; padding: 10px 30px;">
-                        <i class="fas fa-phone-slash"></i> Hangup
+                <!-- Call Input -->
+                <div class="flex gap-2">
+                    <input type="text" id="peerIdInput" placeholder="Enter Target ID to Call" class="flex-1 bg-slate-800 border border-slate-600 rounded px-4 text-white focus:outline-none focus:border-green-500">
+                    <button id="callBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded shadow-[0_0_10px_rgba(34,197,94,0.4)]">
+                        <i class="fas fa-phone"></i>
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Videos -->
-            <div class="video-grid">
-                <div class="video-wrapper">
-                    <video id="local-video" autoplay playsinline muted></video>
-                    <div class="absolute bottom-2 left-2 bg-gray-800 bg-opacity-50 text-white text-xs px-2 py-1 rounded">You</div>
+        <!-- Incoming Call Modal -->
+        <div id="incomingModal" class="hidden absolute inset-0 z-50 bg-black/90 flex items-center justify-center backdrop-blur-sm">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-green-500/50 shadow-[0_0_30px_rgba(34,197,94,0.2)] text-center w-80">
+                <div class="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                    <i class="fas fa-phone-volume text-2xl text-green-400"></i>
                 </div>
-                <div class="video-wrapper">
-                    <video id="remote-video" autoplay playsinline></video>
-                    <div class="absolute bottom-2 left-2 bg-gray-800 bg-opacity-50 text-white text-xs px-2 py-1 rounded">Remote</div>
+                <h3 class="text-xl font-bold text-white mb-1">INCOMING CALL</h3>
+                <p class="text-xs text-slate-400 mb-6 font-mono" id="callerIdDisplay">UNKNOWN SOURCE</p>
+                <div class="flex gap-4 justify-center">
+                    <button id="rejectBtn" class="bg-red-600 hover:bg-red-700 text-white w-12 h-12 rounded-full"><i class="fas fa-times"></i></button>
+                    <button id="answerBtn" class="bg-green-600 hover:bg-green-700 text-white w-12 h-12 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.6)]"><i class="fas fa-check"></i></button>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- SCRIPTS -->
+    <!-- Logic Script -->
     <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot, addDoc, collection, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, onValue, push, child, get, remove, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // Firebase Configuration (Provided by User)
+        // 1. Firebase Configuration (User Provided)
         const firebaseConfig = {
             apiKey: "AIzaSyBy5AGDGQFZqbL83fKQfLViX_pyOu6AJ38",
             authDomain: "phone-f605e.firebaseapp.com",
@@ -253,314 +136,293 @@
             measurementId: "G-LM88X7BV39"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        const db = getDatabase(app);
 
         // State Variables
-        let user = null;
-        let localStream = null;
-        let remoteStream = null;
-        let peerConnection = null;
-        let currentCallDocId = null; // Currently active call document ID
-        let unsubscribeCallListener = null;
+        let localStream;
+        let remoteStream;
+        let peerConnection;
+        let currentUser = null;
+        let currentCallId = null;
+        let isCaller = false;
 
-        // ICE Servers (Google Public STUN)
+        // WebRTC Config (Using Google's Free STUN servers)
         const servers = {
             iceServers: [
                 { urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }
-            ],
-            iceCandidatePoolSize: 10,
+            ]
         };
 
         // DOM Elements
-        const authContainer = document.getElementById('auth-container');
-        const dashboardContainer = document.getElementById('dashboard-container');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const authActionBtn = document.getElementById('auth-action-btn');
-        const toggleAuthBtn = document.getElementById('toggle-auth');
-        const authTitle = document.getElementById('auth-title');
-        const authError = document.getElementById('auth-error');
-        const logoutBtn = document.getElementById('logout-btn');
-        const myUidInput = document.getElementById('my-uid');
-        const targetUidInput = document.getElementById('target-uid');
-        const callBtn = document.getElementById('call-btn');
-        const localVideo = document.getElementById('local-video');
-        const remoteVideo = document.getElementById('remote-video');
-        const callStatus = document.getElementById('call-status');
-        const statusText = document.getElementById('status-text');
-        const acceptBtn = document.getElementById('accept-btn');
-        const hangupBtn = document.getElementById('hangup-btn');
-        const copyUidBtn = document.getElementById('copy-uid');
+        const authContainer = document.getElementById('authContainer');
+        const appContainer = document.getElementById('appContainer');
+        const emailInput = document.getElementById('emailInput');
+        const passInput = document.getElementById('passInput');
+        const authError = document.getElementById('authError');
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const myIdDisplay = document.getElementById('myIdDisplay');
+        const dashboard = document.getElementById('dashboard');
+        const callControls = document.getElementById('callControls');
+        const incomingModal = document.getElementById('incomingModal');
+        const waitingMsg = document.getElementById('waitingMsg');
 
-        let isLoginMode = true;
+        // --- AUTH FUNCTIONS ---
 
-        // --- AUTHENTICATION LOGIC ---
-
-        onAuthStateChanged(auth, (currentUser) => {
-            if (currentUser) {
-                user = currentUser;
-                showDashboard();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                authContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+                myIdDisplay.textContent = user.uid;
+                initializeCallListeners();
             } else {
-                user = null;
-                showAuth();
+                currentUser = null;
+                authContainer.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                document.getElementById('logoutBtn').classList.add('hidden');
             }
         });
 
-        authActionBtn.addEventListener('click', async () => {
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            authError.classList.add('hidden');
-
+        document.getElementById('loginBtn').addEventListener('click', async () => {
             try {
-                if (isLoginMode) {
-                    await signInWithEmailAndPassword(auth, email, password);
-                } else {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                }
-            } catch (error) {
-                authError.textContent = error.message;
-                authError.classList.remove('hidden');
-            }
+                await signInWithEmailAndPassword(auth, emailInput.value, passInput.value);
+            } catch (error) { authError.textContent = error.message; }
         });
 
-        toggleAuthBtn.addEventListener('click', () => {
-            isLoginMode = !isLoginMode;
-            authTitle.textContent = isLoginMode ? 'Login' : 'Register';
-            authActionBtn.textContent = isLoginMode ? 'LOGIN' : 'REGISTER';
-            toggleAuthBtn.textContent = isLoginMode ? 'Need an account? Register here' : 'Have an account? Login here';
-            authError.classList.add('hidden');
+        document.getElementById('registerBtn').addEventListener('click', async () => {
+            try {
+                await createUserWithEmailAndPassword(auth, emailInput.value, passInput.value);
+            } catch (error) { authError.textContent = error.message; }
         });
 
-        logoutBtn.addEventListener('click', async () => {
-            await signOut(auth);
-            window.location.reload();
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(currentUser.uid);
+            alert("ID Copied to Clipboard!");
         });
 
-        function showAuth() {
-            authContainer.classList.remove('hidden');
-            dashboardContainer.classList.add('hidden');
-            logoutBtn.classList.add('hidden');
-        }
-
-        async function showDashboard() {
-            authContainer.classList.add('hidden');
-            dashboardContainer.classList.remove('hidden');
-            logoutBtn.classList.remove('hidden');
-            myUidInput.value = user.uid;
-            
-            // Start Local Camera immediately
-            await startLocalVideo();
-            
-            // Listen for calls directed to MY UID
-            listenForIncomingCalls();
-        }
-
-        // --- WEBRTC & CALL LOGIC ---
+        // --- WEBRTC & CALL FUNCTIONS ---
 
         async function startLocalVideo() {
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                localVideo.srcObject = localStream;
-                remoteStream = new MediaStream();
-                remoteVideo.srcObject = remoteStream;
-            } catch (err) {
-                console.error("Error accessing media devices:", err);
-                alert("Please allow camera and microphone access!");
-            }
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            localVideo.srcObject = localStream;
+            remoteStream = new MediaStream();
+            remoteVideo.srcObject = remoteStream;
+            
+            // UI Update
+            dashboard.classList.add('translate-y-full'); // Hide dial pad
+            callControls.classList.remove('hidden');
         }
 
-        // 1. Caller starts the call
-        callBtn.addEventListener('click', async () => {
-            const targetUid = targetUidInput.value.trim();
-            if (!targetUid || targetUid === user.uid) {
-                alert("Please enter a valid User ID (not your own).");
-                return;
-            }
-
-            callBtn.disabled = true;
-            callBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calling...';
-            hangupBtn.parentElement.parentElement.classList.remove('hidden');
-            statusText.textContent = "Calling...";
-            acceptBtn.classList.add('hidden');
-
-            // Initialize Peer Connection
+        async function createPeerConnection(callId) {
             peerConnection = new RTCPeerConnection(servers);
 
-            // Add local tracks
+            // Add local tracks to peer connection
             localStream.getTracks().forEach(track => {
                 peerConnection.addTrack(track, localStream);
             });
 
-            // Handle remote tracks
+            // Listen for remote tracks
             peerConnection.ontrack = (event) => {
                 event.streams[0].getTracks().forEach(track => {
                     remoteStream.addTrack(track);
                 });
             };
 
-            // Setup Firestore Doc for this call (ID is the Receiver's UID)
-            // Note: In a real app, we'd use a unique Call ID, but for this demo, 
-            // using the Receiver's UID as the document ID ensures a direct line.
-            const callDocRef = doc(db, 'calls', targetUid);
-            const offerCandidates = collection(callDocRef, 'offerCandidates');
-            const answerCandidates = collection(callDocRef, 'answerCandidates');
-
-            // Handle ICE Candidates (Caller)
+            // ICE Candidates logic
             peerConnection.onicecandidate = (event) => {
                 if (event.candidate) {
-                    addDoc(offerCandidates, event.candidate.toJSON());
+                    // Send candidate to DB
+                    const candidateRef = push(ref(db, `calls/${callId}/${isCaller ? 'callerCandidates' : 'calleeCandidates'}`));
+                    set(candidateRef, event.candidate.toJSON());
                 }
             };
+
+            return peerConnection;
+        }
+
+        // --- INITIATE CALL (CALLER SIDE) ---
+        document.getElementById('callBtn').addEventListener('click', async () => {
+            const targetId = document.getElementById('peerIdInput').value.trim();
+            if (!targetId || targetId === currentUser.uid) return alert("Invalid ID");
+
+            isCaller = true;
+            currentCallId = generateCallId(currentUser.uid, targetId); // Simple unique ID for the session
+
+            await startLocalVideo();
+            const pc = await createPeerConnection(currentCallId);
 
             // Create Offer
-            const offerDescription = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offerDescription);
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
 
-            // Write Offer to Firestore
-            const callData = {
-                offer: {
-                    type: offerDescription.type,
-                    sdp: offerDescription.sdp,
-                },
-                callerId: user.uid,
-                timestamp: new Date()
-            };
-            
-            await setDoc(callDocRef, callData);
-
-            // Listen for Answer
-            onSnapshot(callDocRef, (snapshot) => {
-                const data = snapshot.data();
-                if (!peerConnection.currentRemoteDescription && data?.answer) {
-                    const answerDescription = new RTCSessionDescription(data.answer);
-                    peerConnection.setRemoteDescription(answerDescription);
-                    statusText.textContent = "Connected";
-                    callBtn.innerHTML = '<i class="fas fa-video"></i> CALL';
-                }
+            // Save call data to DB so Receiver can see it
+            const callRef = ref(db, `calls/${currentCallId}`);
+            await set(callRef, {
+                callerId: currentUser.uid,
+                receiverId: targetId,
+                offer: { type: offer.type, sdp: offer.sdp },
+                status: 'calling'
             });
 
-            // Listen for Remote ICE Candidates (Answerer's candidates)
-            onSnapshot(answerCandidates, (snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'added') {
-                        const candidate = new RTCIceCandidate(change.doc.data());
-                        peerConnection.addIceCandidate(candidate);
-                    }
-                });
+            // Notify Receiver specifically
+            const receiverNotifyRef = ref(db, `notifications/${targetId}`);
+            set(receiverNotifyRef, {
+                callerId: currentUser.uid,
+                callSessionId: currentCallId,
+                timestamp: Date.now()
             });
-            
-            currentCallDocId = targetUid;
+
+            waitingMsg.classList.remove('hidden');
+            listenForAnswer(currentCallId);
         });
 
-        // 2. Receiver Listens for Calls (Document ID = My UID)
-        function listenForIncomingCalls() {
-            const myCallDoc = doc(db, 'calls', user.uid);
+        function listenForAnswer(callId) {
+            onValue(ref(db, `calls/${callId}`), (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return; // Call ended or invalid
 
-            unsubscribeCallListener = onSnapshot(myCallDoc, (snapshot) => {
-                const data = snapshot.data();
-                if (data && data.offer && !peerConnection) {
-                    // Incoming Call!
-                    callStatus.classList.remove('hidden');
-                    statusText.textContent = `Incoming call from... ${data.callerId.slice(0,5)}..`;
-                    acceptBtn.classList.remove('hidden');
-                    
-                    acceptBtn.onclick = () => answerCall(myCallDoc, data.offer);
+                if (data.answer && !peerConnection.currentRemoteDescription) {
+                    const answer = new RTCSessionDescription(data.answer);
+                    peerConnection.setRemoteDescription(answer);
+                    waitingMsg.classList.add('hidden');
+                }
+
+                if (data.status === 'ended') {
+                    endCallSession();
+                }
+            });
+
+            // Listen for Remote ICE Candidates
+            onChildAdded(ref(db, `calls/${callId}/calleeCandidates`), (snapshot) => {
+                const candidate = new RTCIceCandidate(snapshot.val());
+                peerConnection.addIceCandidate(candidate);
+            });
+        }
+
+        // --- RECEIVE CALL (RECEIVER SIDE) ---
+        function initializeCallListeners() {
+            // Listen for incoming call notifications
+            const myNotifyRef = ref(db, `notifications/${currentUser.uid}`);
+            onValue(myNotifyRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.callSessionId) {
+                    // Show incoming call modal
+                    document.getElementById('callerIdDisplay').textContent = data.callerId;
+                    incomingModal.classList.remove('hidden');
+                    currentCallId = data.callSessionId;
+                } else {
+                    incomingModal.classList.add('hidden');
                 }
             });
         }
 
-        async function answerCall(callDocRef, offer) {
-            acceptBtn.classList.add('hidden');
-            statusText.textContent = "Connecting...";
+        document.getElementById('answerBtn').addEventListener('click', async () => {
+            incomingModal.classList.add('hidden');
+            isCaller = false;
+            
+            await startLocalVideo();
+            const pc = await createPeerConnection(currentCallId);
 
-            peerConnection = new RTCPeerConnection(servers);
+            // Get the Offer
+            const callRef = ref(db, `calls/${currentCallId}`);
+            const snapshot = await get(callRef);
+            const data = snapshot.val();
 
-            localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
-            });
-
-            peerConnection.ontrack = (event) => {
-                event.streams[0].getTracks().forEach(track => {
-                    remoteStream.addTrack(track);
-                });
-            };
-
-            const offerCandidates = collection(callDocRef, 'offerCandidates');
-            const answerCandidates = collection(callDocRef, 'answerCandidates');
-
-            peerConnection.onicecandidate = (event) => {
-                if (event.candidate) {
-                    addDoc(answerCandidates, event.candidate.toJSON());
-                }
-            };
-
-            // Set Remote Description (The Caller's Offer)
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            const offerDescription = data.offer;
+            await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
 
             // Create Answer
-            const answerDescription = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answerDescription);
+            const answerDescription = await pc.createAnswer();
+            await pc.setLocalDescription(answerDescription);
 
-            const answer = {
-                type: answerDescription.type,
-                sdp: answerDescription.sdp,
-            };
+            // Update DB with Answer
+            const answer = { type: answerDescription.type, sdp: answerDescription.sdp };
+            await set(child(callRef, 'answer'), answer);
+            await set(child(callRef, 'status'), 'connected');
 
-            // Write Answer to Firestore
-            await updateDoc(callDocRef, { answer });
-
-            // Listen for Remote ICE Candidates (Caller's candidates)
-            onSnapshot(offerCandidates, (snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === 'added') {
-                        const candidate = new RTCIceCandidate(change.doc.data());
-                        peerConnection.addIceCandidate(candidate);
-                    }
-                });
+            // Listen for Caller ICE Candidates
+            onChildAdded(ref(db, `calls/${currentCallId}/callerCandidates`), (snapshot) => {
+                const candidate = new RTCIceCandidate(snapshot.val());
+                peerConnection.addIceCandidate(candidate);
             });
             
-            currentCallDocId = user.uid;
-        }
+            // Monitor if Caller ends the call
+            onValue(child(callRef, 'status'), (snapshot) => {
+                if(snapshot.val() === 'ended') {
+                    endCallSession();
+                }
+            });
+        });
 
-        // 3. Hangup Logic
-        hangupBtn.addEventListener('click', async () => {
-            // Clean up connections
+        document.getElementById('rejectBtn').addEventListener('click', () => {
+            incomingModal.classList.add('hidden');
+            // Remove notification
+            remove(ref(db, `notifications/${currentUser.uid}`));
+            // Signal rejection (optional)
+        });
+
+        // --- END CALL LOGIC ---
+        document.getElementById('hangupBtn').addEventListener('click', () => {
+            // Only update DB status to 'ended' if I am the one clicking hangup
+            if (currentCallId) {
+                set(ref(db, `calls/${currentCallId}/status`), 'ended');
+                // Clean up notification if I was the caller calling someone
+                 if(isCaller) {
+                     const targetId = document.getElementById('peerIdInput').value.trim();
+                     remove(ref(db, `notifications/${targetId}`));
+                 } else {
+                     remove(ref(db, `notifications/${currentUser.uid}`));
+                 }
+            }
+            endCallSession();
+        });
+
+        function endCallSession() {
             if (peerConnection) {
                 peerConnection.close();
                 peerConnection = null;
             }
-            
-            // Stop streams (optional, usually keep camera on for UX)
-            // localStream.getTracks().forEach(track => track.stop());
-
-            // Remove Firestore Data to end call cleanly
-            if (currentCallDocId) {
-                // In a real app we would delete subcollections properly using a Cloud Function
-                // For this single file demo, we just try to delete the main doc
-                try {
-                    // Just reset the UI, let the other user disconnect on their own logic
-                    // or delete the doc:
-                    // await deleteDoc(doc(db, 'calls', currentCallDocId)); 
-                } catch(e) { console.log(e); }
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
             }
-
+            
+            localVideo.srcObject = null;
+            remoteVideo.srcObject = null;
+            
             // Reset UI
-            callStatus.classList.add('hidden');
-            callBtn.disabled = false;
-            callBtn.innerHTML = '<i class="fas fa-video"></i> CALL';
-            window.location.reload(); // Quickest way to reset state for this simple demo
+            callControls.classList.add('hidden');
+            dashboard.classList.remove('translate-y-full');
+            waitingMsg.classList.add('hidden');
+            incomingModal.classList.add('hidden');
+            currentCallId = null;
+        }
+
+        // Helpers
+        function generateCallId(uid1, uid2) {
+            // Create a consistent ID regardless of who calls whom (alphabetical sort)
+            // But for this logic, we use unique session based on caller pushing
+            return uid1 < uid2 ? uid1 + uid2 : uid2 + uid1;
+        }
+        
+        // Media Controls
+        document.getElementById('toggleMic').addEventListener('click', (e) => {
+            const audioTrack = localStream.getAudioTracks()[0];
+            audioTrack.enabled = !audioTrack.enabled;
+            e.currentTarget.classList.toggle('bg-red-500');
+            e.currentTarget.innerHTML = audioTrack.enabled ? '<i class="fas fa-microphone"></i>' : '<i class="fas fa-microphone-slash"></i>';
         });
 
-        // Copy UID Utility
-        copyUidBtn.addEventListener('click', () => {
-            myUidInput.select();
-            document.execCommand('copy'); // Fallback for older browsers
-            // Or navigator.clipboard.writeText(myUidInput.value); 
-            copyUidBtn.innerHTML = '<i class="fas fa-check"></i>';
-            setTimeout(() => copyUidBtn.innerHTML = '<i class="fas fa-copy"></i>', 2000);
+        document.getElementById('toggleCam').addEventListener('click', (e) => {
+            const videoTrack = localStream.getVideoTracks()[0];
+            videoTrack.enabled = !videoTrack.enabled;
+            e.currentTarget.classList.toggle('bg-red-500');
+            e.currentTarget.innerHTML = videoTrack.enabled ? '<i class="fas fa-video"></i>' : '<i class="fas fa-video-slash"></i>';
         });
 
     </script>
